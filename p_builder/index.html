@@ -19,7 +19,7 @@
 <header><div class="title"><div class="icon">🧾</div><h1>Character Sheet Prompt Builder v33<span>販売用・プロンプトメーカー / 顔タイプ差別化対応版</span></h1></div><div class="header-actions"><button class="btn secondary" onclick="copyHeaderCropPrompt()">Trimming</button><button class="btn secondary" onclick="copyHeaderLooseDrawingFull()">Loose Drawing</button><button class="btn secondary" onclick="copyHeaderLipSyncPrompt()">Lip Sync</button><button class="btn ghost" onclick="resetAll()">リセット</button></div></header>
 <div class="container">
   <div class="card"><div class="head"><span class="badge">FLOW</span><span class="ttl">使い方</span></div><div class="note">①必要項目を選ぶ、またはランダム作成 → ②構図を選ぶ → ③生成。三面図は切り抜き・Photoshop加工前提で、3体の間隔を広めに取る設定です。</div><div class="btns"><button class="btn secondary" onclick="randomCharacter()">🎲 ランダムキャラ作成</button></div><div class="status" id="status"></div></div>
-  <div class="card" style="grid-column:1/-1"><div class="head"><span class="badge">番号</span><span class="ttl">開始番号・キャラクター名</span></div><div class="note">前回の続きから始める場合は開始番号を入力してください。プロンプト生成時に品番と名前が自動で割り当てられます。</div><div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap"><label style="font-size:13px;font-weight:700;color:var(--muted)">開始番号</label><input id="startNumber" type="number" min="1" max="999" value="1" style="width:90px;border:1.5px solid var(--light);border-radius:12px;padding:8px 12px;font-family:'Zen Maru Gothic',sans-serif;font-size:15px;font-weight:700;color:var(--text);background:var(--pale);text-align:center"><span style="font-size:13px;color:var(--muted)">← 今日の最初の番号を入力（例：前回001まで作ったなら002）</span></div><div id="namePreview" style="margin-top:12px;display:none"><span style="font-size:13px;font-weight:700;color:var(--muted)">次の品番・名前：</span><span id="namePreviewText" style="font-size:15px;font-weight:700;color:var(--main);margin-left:8px"></span></div></div>
+  <div class="card" style="grid-column:1/-1"><div class="head"><span class="badge">番号</span><span class="ttl">開始番号・キャラクター名</span></div><div class="note">前回の続きから始める場合は開始番号を入力してください。<br>三面図・ウエスト・全身は同一番号で生成されます（同じキャラクター扱い）。次のキャラに進むときは、再度三面図を生成すると自動で番号が進みます。手動で進めたい/戻したい場合は下のボタンか開始番号を直接書き換えてください。</div><div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap"><label style="font-size:13px;font-weight:700;color:var(--muted)">開始番号</label><input id="startNumber" type="number" min="1" max="999" value="1" style="width:90px;border:1.5px solid var(--light);border-radius:12px;padding:8px 12px;font-family:'Zen Maru Gothic',sans-serif;font-size:15px;font-weight:700;color:var(--text);background:var(--pale);text-align:center"><button class="btn secondary" style="padding:8px 16px;font-size:12px;box-shadow:0 3px 10px rgba(220,100,30,.18)" onclick="manualIncrement()">➡ 次のキャラへ</button><button class="btn ghost" style="padding:8px 16px;font-size:12px;border-color:#999;color:#666" onclick="manualDecrement()">⬅ 一つ戻す</button></div><div id="namePreview" style="margin-top:12px;display:none"><span style="font-size:13px;font-weight:700;color:var(--muted)">次の品番・名前：</span><span id="namePreviewText" style="font-size:15px;font-weight:700;color:var(--main);margin-left:8px"></span></div></div>
   <div class="card"><div class="head"><span class="badge">STEP 01</span><span class="ttl">国籍（固定：日本人）</span></div><div class="chips" data-key="nationality"><button class="chip">日本人</button><button class="chip">東アジア</button><button class="chip">欧米</button><button class="chip">東南アジア</button><button class="chip">中東</button><button class="chip">アフリカ系</button></div></div>
   <div class="card"><div class="head"><span class="badge">STEP 02</span><span class="ttl">顔タイプ（空白：ランダム）</span></div><div class="chips" data-key="facetype"><button class="chip">美人特化（黄金比）</button><button class="chip">かわいい特化（アイドル寄せ）</button><button class="chip">広告CV高い顔</button><button class="chip">個性的な美人</button><button class="chip">清楚系美人</button><button class="chip">韓国風クール美人</button><button class="chip">童顔ナチュラル</button><button class="chip">大人かわいい</button><button class="chip">ハーフ風華やか美人</button><button class="chip">知的クール</button></div></div>
   <div class="card"><div class="head"><span class="badge">STEP 03</span><span class="ttl">年齢（空白：20代前半）</span></div><div class="chips" data-key="age"><button class="chip">20代前半</button><button class="chip">20代後半</button><button class="chip">30代前半</button><button class="chip">30代後半</button><button class="chip">40代</button></div></div>
@@ -33,6 +33,8 @@
 <div class="toast" id="toast"></div>
 <script>
 const state={nationality:'',facetype:'',age:'',body:'',hairColor:[],hairLength:'',hairStyle:'',bangs:'',hairFree:'',shot:''};
+// 三面図を生成済みの番号を記録（同じ番号でもう一度三面図を生成しようとしたら次に進める）
+let lastTurnaroundSerial='';
 const data={
  nationality:{'日本人':['日本人女性','Japanese woman'],'東アジア':['東アジア系女性','East Asian woman'],'欧米':['欧米系女性','Caucasian woman'],'東南アジア':['東南アジア系女性','Southeast Asian woman'],'中東':['中東系女性','Middle Eastern woman'],'アフリカ系':['アフリカ系女性','African woman']},
  facetype:{'美人特化（黄金比）':['整った上品な美人系の顔立ち','golden ratio face proportions, high nose bridge, sharp defined jawline, symmetrical face, high cheekbones, refined elegant facial features, soft sophisticated expression, gentle smile-ready expression'],'かわいい特化（アイドル寄せ）':['明るく可愛らしいアイドル系の顔立ち','cute idol-like facial features, small face, big bright eyes, soft innocent expression, youthful friendly appearance'],'広告CV高い顔':['親しみやすく清潔感のある自然な顔立ち','natural beauty, girl-next-door natural beauty, slightly round soft face shape, approachable rather than glamorous, natural double eyelid, warm gentle expression, soft cheeks, clean everyday look, relatable attractive appearance'],'個性的な美人':['個性的でクールな美人系の顔立ち','sharp almond-shaped eyes with cool calm gaze, slightly upswept eyebrows, mysterious enigmatic expression, sharply defined jawline, cool aloof beauty, distinct melancholic atmosphere, quiet intense screen presence, neutral closed-mouth expression, lips closed without smile, no teeth visible, prominent high cheekbones, deep-set eyes, angular facial structure'],'清楚系美人':['透明感があり上品で清楚な美人系の顔立ち','clear elegant beauty, graceful refined facial features, calm gentle eyes, soft natural expression, clean and pure impression, understated beauty, approachable softness'],'韓国風クール美人':['洗練された韓国風のクールな美人系の顔立ち','Korean-inspired cool beauty, sleek sharp facial features, sharply defined V-line jawline, narrow almond-shaped eyes with cool gaze, modern sophisticated chic appearance, composed neutral expression, sharp nose bridge, refined cold beauty'],'童顔ナチュラル':['若々しく親しみやすい童顔ナチュラルな顔立ち','youthful natural baby-face features, softly rounded face, gentle cheeks, natural bright eyes, friendly approachable expression, clean everyday beauty, not childish'],'大人かわいい':['甘すぎない上品な大人かわいい顔立ち','mature cute beauty, soft feminine facial features, gentle eyes, refined sweetness, calm friendly expression, elegant but cute impression, not overly childish'],'ハーフ風華やか美人':['華やかで立体感のあるハーフ風美人系の顔立ち','mixed-look inspired glamorous beauty, sculpted three-dimensional facial features, high prominent nose bridge, deep-set bright eyes, sharply defined jawline, elegant glamorous striking impression, dimensional contoured face'],'知的クール':['落ち着きと知性のあるクールな美人系の顔立ち','intelligent cool beauty, calm thoughtful sharp eyes, refined angular facial features, composed neutral expression, sophisticated quiet intense presence, defined jawline, contemplative atmosphere']},
@@ -66,6 +68,23 @@ function incrementNumber(){
  const el=document.getElementById('startNumber');
  if(el)el.value=parseInt(el.value||'1',10)+1;
  updateNamePreview();
+}
+function manualIncrement(){
+ const el=document.getElementById('startNumber');
+ if(!el)return;
+ const cur=parseInt(el.value||'1',10);
+ el.value=cur+1;
+ updateNamePreview();
+ showToast(`番号を ${String(cur+1).padStart(3,'0')} に進めました。`);
+}
+function manualDecrement(){
+ const el=document.getElementById('startNumber');
+ if(!el)return;
+ const cur=parseInt(el.value||'1',10);
+ if(cur<=1){showToast('これ以上戻せません。');return;}
+ el.value=cur-1;
+ updateNamePreview();
+ showToast(`番号を ${String(cur-1).padStart(3,'0')} に戻しました。`);
 }
 function updateNamePreview(){
  const el=document.getElementById('namePreview');
@@ -168,6 +187,13 @@ function generatePrompt(isTest=false){
  let charName='';
  let fullCode='';
  if(!isTest){
+  // 三面図を生成しようとしたとき、現在の番号がすでに三面図生成済みなら次の番号に進める
+  if(isTurnaround){
+   const currentSerial=getSerialNumber();
+   if(lastTurnaroundSerial===currentSerial){
+    incrementNumber();
+   }
+  }
   serial=getSerialNumber();
   charName=getCharacterName();
   if(charName===null){
@@ -295,7 +321,11 @@ artifact-free,
  document.getElementById('jpText').textContent=jpText;
  document.getElementById('enText').textContent=isTurnaround?turnaroundPrompt:(isFull?fullPrompt:waistPrompt);
  document.getElementById('output').classList.add('visible');
- if(!isTest)incrementNumber();
+ // 三面図を生成したら、その番号を「三面図生成済み」として記録する
+ // 次に三面図を生成しようとしたとき、この番号と一致すれば自動で次に進む
+ if(!isTest&&isTurnaround){
+  lastTurnaroundSerial=serial;
+ }
  setTimeout(()=>document.getElementById('output').scrollIntoView({behavior:'smooth',block:'start'}),100);
 }
 const promptButtons=[
