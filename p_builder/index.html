@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Character Sheet Prompt Builder v39</title>
+<title>Character Sheet Prompt Builder v40</title>
 <link rel="icon" href="./favicon.ico" type="image/x-icon">
 <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
 <style>
@@ -28,7 +28,7 @@
 @media(max-width:520px){.modal-box{padding:18px 16px}.code-table{font-size:12px}.code-table td.code{width:60px}}</style>
 </head>
 <body>
-<header><div class="title"><div class="icon">🧾</div><h1>Character Sheet Prompt Builder v39<span>販売用・プロンプトメーカー / 髪色髪型グループ解除</span></h1></div><div class="header-actions"><button class="btn secondary" onclick="copyHeaderCropPrompt()">Trimming</button><button class="btn secondary" onclick="copyHeaderLooseDrawingFull()">Loose Drawing</button><button class="btn secondary" onclick="copyHeaderLipSyncPrompt()">Lip Sync</button><button class="btn secondary" onclick="openCodeTable()">コード表</button><button class="btn ghost" onclick="resetAll()">リセット</button></div></header>
+<header><div class="title"><div class="icon">🧾</div><h1>Character Sheet Prompt Builder v40<span>販売用・プロンプトメーカー / 直前5体回避ロジック追加</span></h1></div><div class="header-actions"><button class="btn secondary" onclick="copyHeaderCropPrompt()">Trimming</button><button class="btn secondary" onclick="copyHeaderLooseDrawingFull()">Loose Drawing</button><button class="btn secondary" onclick="copyHeaderLipSyncPrompt()">Lip Sync</button><button class="btn secondary" onclick="openCodeTable()">コード表</button><button class="btn ghost" onclick="resetAll()">リセット</button></div></header>
 <div class="modal-overlay" id="codeTableModal" onclick="if(event.target===this)closeCodeTable()">
  <div class="modal-box">
   <button class="modal-close" onclick="closeCodeTable()" aria-label="閉じる">✕</button>
@@ -108,7 +108,7 @@
  </div>
 </div>
 <div class="container">
-  <div class="card"><div class="head"><span class="badge">FLOW</span><span class="ttl">使い方</span></div><div class="note">①必要項目を選ぶ、またはランダム作成 → ②構図を選ぶ → ③生成。三面図は切り抜き・Photoshop加工前提で、3体の間隔を広めに取る設定です。</div><div class="btns"><button class="btn secondary" onclick="randomCharacter()">🎲 ランダムキャラ作成</button></div><div class="status" id="status"></div></div>
+  <div class="card"><div class="head"><span class="badge">FLOW</span><span class="ttl">使い方</span></div><div class="note">①必要項目を選ぶ、またはランダム作成 → ②構図を選ぶ → ③生成。三面図は切り抜き・Photoshop加工前提で、3体の間隔を広めに取る設定です。<br><span style="color:#c66;font-weight:700">v40：直前5体と同じ髪色グループ・髪色・髪型・顔タイプを避けて生成します。</span></div><div class="btns"><button class="btn secondary" onclick="randomCharacter()">🎲 ランダムキャラ作成</button></div><div style="margin-top:12px;padding:10px 12px;background:#fdf6ec;border-radius:8px;border:1px solid #f0d9b5"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><span style="font-size:12px;font-weight:700;color:var(--main)">📖 直前5体の履歴</span><button class="btn ghost" style="padding:4px 10px;font-size:11px;border-color:#999;color:#666" onclick="clearHistory()">履歴クリア</button></div><div id="historyDisplay"><span style="color:#999;font-size:12px">履歴なし（ランダム生成すると直前5体が記録されます）</span></div></div><div class="status" id="status"></div></div>
   <div class="card" style="grid-column:1/-1"><div class="head"><span class="badge">番号</span><span class="ttl">開始番号・キャラクター名</span></div><div class="note">前回の続きから始める場合は開始番号を入力してください。<br>三面図・ウエスト・全身は同一番号で生成されます（同じキャラクター扱い）。次のキャラに進むときは、再度三面図を生成すると自動で番号が進みます。手動で進めたい/戻したい場合は下のボタンか開始番号を直接書き換えてください。</div><div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap"><label style="font-size:13px;font-weight:700;color:var(--muted)">開始番号</label><input id="startNumber" type="number" min="1" max="999" value="1" style="width:90px;border:1.5px solid var(--light);border-radius:12px;padding:8px 12px;font-family:'Zen Maru Gothic',sans-serif;font-size:15px;font-weight:700;color:var(--text);background:var(--pale);text-align:center"><button class="btn secondary" style="padding:8px 16px;font-size:12px;box-shadow:0 3px 10px rgba(220,100,30,.18)" onclick="manualIncrement()">➡ 次のキャラへ</button><button class="btn ghost" style="padding:8px 16px;font-size:12px;border-color:#999;color:#666" onclick="manualDecrement()">⬅ 一つ戻す</button></div><div id="namePreview" style="margin-top:12px;display:none"><span style="font-size:13px;font-weight:700;color:var(--muted)">次の品番・名前：</span><span id="namePreviewText" style="font-size:15px;font-weight:700;color:var(--main);margin-left:8px"></span></div></div>
   <div class="card"><div class="head"><span class="badge">STEP 01</span><span class="ttl">国籍（固定：日本人）</span></div><div class="chips" data-key="nationality"><button class="chip">日本人</button><button class="chip">東アジア</button><button class="chip">欧米</button><button class="chip">東南アジア</button><button class="chip">中東</button><button class="chip">アフリカ系</button></div></div>
   <div class="card"><div class="head"><span class="badge">STEP 02</span><span class="ttl">顔タイプ（空白：ランダム）</span></div><div class="chips" data-key="facetype"><button class="chip">美人特化（黄金比）</button><button class="chip">かわいい特化（アイドル寄せ）</button><button class="chip">広告CV高い顔</button><button class="chip">個性的な美人</button><button class="chip">清楚系美人</button><button class="chip">韓国風クール美人</button><button class="chip">童顔ナチュラル</button><button class="chip">大人かわいい</button><button class="chip">ハーフ風華やか美人</button><button class="chip">知的クール</button></div></div>
@@ -313,6 +313,96 @@ function hairStyleOptionsForLength(length){
 function isInvalidHairCombo(length,style){
  return (length==='ショート'||length==='ベリーショート')&&style==='アップスタイル';
 }
+
+// ============ v40新規：履歴管理＋連続見た目回避 ============
+// 直前N体の履歴を localStorage に保存し、同じ髪色/髪型/顔タイプ/髪色グループが連続しないように制御
+const HISTORY_KEY='cspb_v40_history';
+const HISTORY_LIMIT=5;
+// 髪色の見た目グループ（パッと見の印象が近いものをグルーピング）
+const hairColorGroups={
+ 'ダーク系':['黒','ダークブラウン'],
+ 'ブラウン系':['ブラウン','ライトブラウン'],
+ '明るい系':['ブロンド','グレー','ハイトーン'],
+ 'カラフル系':['ピンク','レッド','ブルー'],
+ '複合系':['インナーカラー','グラデーション','ハイライト']
+};
+function getColorGroup(color){
+ for(const g in hairColorGroups){
+  if(hairColorGroups[g].includes(color))return g;
+ }
+ return null;
+}
+function loadHistory(){
+ try{
+  const raw=localStorage.getItem(HISTORY_KEY);
+  if(!raw)return [];
+  const arr=JSON.parse(raw);
+  return Array.isArray(arr)?arr:[];
+ }catch(e){return []}
+}
+function saveHistory(history){
+ try{
+  localStorage.setItem(HISTORY_KEY,JSON.stringify(history));
+ }catch(e){}
+}
+function pushHistory(entry){
+ const h=loadHistory();
+ h.push(entry);
+ while(h.length>HISTORY_LIMIT)h.shift();
+ saveHistory(h);
+ updateHistoryDisplay();
+}
+function clearHistory(){
+ try{localStorage.removeItem(HISTORY_KEY);}catch(e){}
+ updateHistoryDisplay();
+ showToast('履歴をクリアしました。');
+}
+// 履歴から「避けたい値」を抽出
+function getBannedValues(){
+ const h=loadHistory();
+ const bannedColors=new Set();
+ const bannedStyles=new Set();
+ const bannedFacetypes=new Set();
+ const bannedColorGroups=new Set();
+ h.forEach(e=>{
+  if(e.hairColor)bannedColors.add(e.hairColor);
+  if(e.hairStyle)bannedStyles.add(e.hairStyle);
+  if(e.facetype)bannedFacetypes.add(e.facetype);
+  if(e.hairColorGroup)bannedColorGroups.add(e.hairColorGroup);
+ });
+ return {bannedColors,bannedStyles,bannedFacetypes,bannedColorGroups};
+}
+// 履歴回避＋シャッフルキュー：候補を絞り込んでから pickFromQueue
+// 候補が枯れたら段階的に制約を緩める（フォールバック）
+function pickWithHistoryAvoidance(name,sourceArr,banSets){
+ // banSets: 配列 [厳しい順]。各要素は除外する値の Set
+ // 例: [Set('黒','ストレート'), Set('黒')] → まず両方避ける、ダメなら片方だけ
+ for(const bans of banSets){
+  const filtered=sourceArr.filter(v=>!bans.has(v));
+  if(filtered.length>0){
+   // 専用キューを使う（フィルタ条件ごとに別キュー）
+   const queueName=name+'_filtered_'+filtered.length;
+   return pickFromQueue(queueName,filtered);
+  }
+ }
+ // すべて枯れた場合は通常キュー
+ return pickFromQueue(name,sourceArr);
+}
+// 履歴表示更新
+function updateHistoryDisplay(){
+ const el=document.getElementById('historyDisplay');
+ if(!el)return;
+ const h=loadHistory();
+ if(h.length===0){
+  el.innerHTML='<span style="color:#999;font-size:12px">履歴なし（ランダム生成すると直前5体が記録されます）</span>';
+  return;
+ }
+ const items=h.map((e,i)=>{
+  const num=h.length-i;
+  return `<div style="font-size:12px;color:#666;margin:2px 0">直前${num}：${e.facetype||'?'} / ${e.hairColor||'?'}（${e.hairColorGroup||'?'}）/ ${e.hairStyle||'?'}</div>`;
+ }).reverse().join('');
+ el.innerHTML=items;
+}
 function setVal(key,val){
  if(key==='hairColor'){
   if(!Array.isArray(state.hairColor))state.hairColor=[];
@@ -345,20 +435,60 @@ window.addEventListener('DOMContentLoaded',()=>{
  renderPromptButtons();
  const startEl=document.getElementById('startNumber');
  if(startEl)startEl.addEventListener('input',updateNamePreview);
+ // v40: 履歴表示を初期化
+ updateHistoryDisplay();
 });function randomCharacter(){
  // 国籍・年齢・体型は固定（日本人モデル前提）
  setVal('nationality','日本人');
  setVal('age','20代前半');
  setVal('body','モデル体型');
- // シャッフルキュー方式で各項目を均等抽出
- setVal('facetype',pickFromQueue('facetype',keys('facetype')));
+ // v40：履歴から避けたい値を取得
+ const {bannedColors,bannedStyles,bannedFacetypes,bannedColorGroups}=getBannedValues();
+ // 顔タイプ：直前5体と被らない選択
+ const facetypeOptions=keys('facetype');
+ const ft=pickWithHistoryAvoidance('facetype',facetypeOptions,[
+  bannedFacetypes,  // 直前5体の顔タイプを完全に避ける
+  new Set([...bannedFacetypes].slice(-2))  // ダメなら直前2体のみ避ける
+ ]);
+ setVal('facetype',ft);
+ // 髪の長さ：履歴回避対象外（種類が少なく多様性も視覚インパクトも大きいため）
  setVal('hairLength',pickFromQueue('hairLength',keys('hairLength')));
- setVal('hairStyle',pickFromQueue('hairStyle_'+state.hairLength,hairStyleOptionsForLength(state.hairLength)));
+ // 髪型：直前5体と被らない選択
+ const styleOptions=hairStyleOptionsForLength(state.hairLength);
+ const styleQueueName='hairStyle_'+state.hairLength;
+ const hs=pickWithHistoryAvoidance(styleQueueName,styleOptions,[
+  bannedStyles,
+  new Set([...bannedStyles].slice(-2))
+ ]);
+ setVal('hairStyle',hs);
+ // 前髪：履歴回避対象外（5種しかなく回避しすぎると枯れる）
  setVal('bangs',pickFromQueue('bangs',keys('bangs')));
+ // 髪色：直前5体と「色値」も「色グループ」も被らない選択
  state.hairColor=[];
- setVal('hairColor',pickFromQueue('hairColor',hairColorOptionsForRandom()));
+ const colorOptions=hairColorOptionsForRandom();
+ // 段階的フィルタ：①グループも値も避ける ②グループだけ避ける ③値だけ避ける ④制約なし
+ const bannedByGroup=new Set();
+ colorOptions.forEach(c=>{
+  if(bannedColorGroups.has(getColorGroup(c)))bannedByGroup.add(c);
+ });
+ const allBanned=new Set([...bannedColors,...bannedByGroup]);
+ const hc=pickWithHistoryAvoidance('hairColor',colorOptions,[
+  allBanned,        // ①グループも値も避ける（最も厳しい）
+  bannedByGroup,    // ②グループだけ避ける
+  bannedColors      // ③値だけ避ける
+  // ④制約なし → pickFromQueue にフォールバック（pickWithHistoryAvoidance内で処理）
+ ]);
+ setVal('hairColor',hc);
  const hf=document.getElementById('hairFree');if(hf)hf.value='';state.hairFree='';
- showStatus('ランダムキャラを作成しました。STEP 06で構図を選択してください。');
+ // v40：今回の選択を履歴に追加
+ pushHistory({
+  facetype:state.facetype,
+  hairColor:hc,
+  hairColorGroup:getColorGroup(hc),
+  hairStyle:state.hairStyle,
+  timestamp:Date.now()
+ });
+ showStatus('ランダムキャラを作成しました。STEP 06で構図を選択してください。（直前5体との見た目連続を回避）');
 }
 function applyDefaults(){Object.keys(defaults).forEach(k=>{if(!state[k])setVal(k,defaults[k])});if(!state.facetype)setVal('facetype',pick(keys('facetype')));if(!state.hairLength)setVal('hairLength',pick(keys('hairLength')));if(!state.hairStyle)setVal('hairStyle',pick(hairStyleOptionsForLength(state.hairLength)));if(!state.bangs)setVal('bangs',pick(keys('bangs')));if(!Array.isArray(state.hairColor)||state.hairColor.length===0)setVal('hairColor',pick(keys('hairColor')))}
 function jp(k){return data[k][state[k]][0]}
